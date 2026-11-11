@@ -9,13 +9,15 @@ import {
   Mail,
   MapPin,
   Menu,
+  MessageSquare,
   Phone,
   Scale,
   Users,
   X,
 } from "lucide-react";
+import founderImg from "./assets/founder.jpg";
 
-const firmName = "Aldridge & Mensah";
+const firmName = "Arthur Kirk Dahms";
 const currentYear = new Date().getFullYear();
 const navItems = [
   { label: "Practice", href: "#practice" },
@@ -129,6 +131,22 @@ export default function App() {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [menuOpen]);
 
+  const scrollToSection = (e, targetId) => {
+    e.preventDefault();
+    setMenuOpen(false);
+    const element = document.querySelector(targetId);
+    if (element) {
+      const headerOffset = 90;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
   const handleBrief = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -142,12 +160,15 @@ export default function App() {
       `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\nArea of counsel: ${practice}\n\nBrief outline:\n${message}`,
     );
     setNotice("Your email application should open with a draft addressed to the firm.");
-    window.location.href = `mailto:counsel@aldridgemensah.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:counsel@dahmslaw.com?subject=${subject}&body=${body}`;
   };
 
   return (
     <main className={`am2-page${scrolled ? " has-scrolled" : ""}`}>
       <style>{`
+        html {
+          scroll-behavior: smooth;
+        }
         .am2-page {
           --paper: #fbfaf7; --white: #fffefa; --ink: #172637; --navy: #172b40;
           --muted: #5d6872; --line: #d9dfe1; --burgundy: #77364a; --blue: #52758d;
@@ -159,7 +180,28 @@ export default function App() {
         .am2-page a { color: inherit; text-decoration: none; }
         .am2-page button, .am2-page input, .am2-page textarea, .am2-page select { font: inherit; }
         .am2-page button { color: inherit; }
-        .am2-page .am2-serif { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; }
+        
+        /* Smooth scroll margin so fixed header never covers section headlines */
+        #home, #practice, #firm, #approach, #contact {
+          scroll-margin-top: 96px;
+        }
+        
+        /* Large headlines font style (Lora, unitalicized) */
+        .am2-page .am2-serif {
+          font-family: "Lora", Georgia, serif !important;
+          font-weight: 500;
+          font-style: normal !important;
+          letter-spacing: -.02em;
+        }
+        .am2-hero h1 em,
+        .am2-section-head h2 em,
+        .am2-firm-copy h2 em,
+        .am2-process-head h2 em,
+        .am2-contact-copy h2 em,
+        .am2-intro p em {
+          font-style: normal !important;
+        }
+
         .am2-container { width: min(1180px, calc(100% - 64px)); margin-inline: auto; }
         .am2-utility {
           display: flex; justify-content: space-between; align-items: center; gap: 18px;
@@ -177,7 +219,7 @@ export default function App() {
           box-shadow: 0 8px 24px rgba(23,38,55,.05);
         }
         .am2-nav { min-height: 80px; display: flex; align-items: center; justify-content: space-between; gap: 25px; }
-        .am2-brand { display: inline-flex; align-items: center; gap: 13px; flex-shrink: 0; }
+        .am2-brand { display: inline-flex; align-items: center; gap: 13px; flex-shrink: 0; cursor: pointer; }
         .am2-brand-mark {
           width: 40px; height: 40px; display: grid; place-items: center; color: var(--burgundy);
           border: 1px solid #c9aeb6; border-radius: 50%;
@@ -185,14 +227,14 @@ export default function App() {
         .am2-brand-name { display: block; font-family: "Cinzel", Georgia, serif; font-size: 12px; letter-spacing: .095em; }
         .am2-brand-caption { display: block; margin-top: 4px; color: var(--muted); font-size: 8px; letter-spacing: .14em; text-transform: uppercase; }
         .am2-links { display: flex; align-items: center; gap: clamp(18px, 3vw, 40px); }
-        .am2-links a { position: relative; padding: 10px 0; color: #354451; font-size: 10px; letter-spacing: .09em; text-transform: uppercase; }
+        .am2-links a { position: relative; padding: 10px 0; color: #354451; font-size: 10px; letter-spacing: .09em; text-transform: uppercase; cursor: pointer; }
         .am2-links a::after { position: absolute; right: 0; bottom: 4px; left: 0; height: 1px; background: var(--burgundy); content: ""; transform: scaleX(0); transform-origin: right; transition: transform .28s ease; }
         .am2-links a:hover::after { transform: scaleX(1); transform-origin: left; }
         .am2-button {
           min-height: 46px; display: inline-flex; align-items: center; justify-content: center; gap: 13px;
           padding: 0 19px; border: 1px solid var(--burgundy); background: var(--burgundy); color: white !important;
           font-size: 9px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
-          transition: background .22s ease, color .22s ease, transform .22s ease;
+          transition: background .22s ease, color .22s ease, transform .22s ease; cursor: pointer;
         }
         .am2-button:hover { background: transparent; color: var(--burgundy) !important; transform: translateY(-2px); }
         .am2-button svg { transition: transform .22s ease; }
@@ -208,13 +250,13 @@ export default function App() {
         .am2-hero-inner { position: relative; z-index: 1; padding-top: 68px; padding-bottom: 78px; }
         .am2-kicker { display: inline-flex; align-items: center; gap: 12px; color: #dfc6cc; font-size: 9px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
         .am2-kicker::before { width: 29px; height: 1px; background: currentColor; content: ""; }
-        .am2-hero h1 { max-width: 800px; margin: 22px 0 22px; font-size: clamp(60px, 8.4vw, 108px); line-height: .91; letter-spacing: -.045em; }
-        .am2-hero h1 em { color: #e2c5cc; font-weight: 400; }
+        .am2-hero h1 { max-width: 800px; margin: 22px 0 22px; font-size: clamp(54px, 7.5vw, 96px); line-height: .98; letter-spacing: -.035em; }
+        .am2-hero h1 em { color: #e2c5cc; }
         .am2-hero-copy { max-width: 495px; margin: 0; color: rgba(255,254,250,.87); font-size: 13px; line-height: 1.95; }
         .am2-hero-actions { display: flex; align-items: center; gap: 27px; margin-top: 30px; }
         .am2-hero .am2-button { border-color: #f6f2ec; background: #f6f2ec; color: var(--navy) !important; }
         .am2-hero .am2-button:hover { color: white !important; border-color: white; background: transparent; }
-        .am2-inline-link { display: inline-flex; align-items: center; gap: 9px; color: white; font-size: 9px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+        .am2-inline-link { display: inline-flex; align-items: center; gap: 9px; color: white; font-size: 9px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; cursor: pointer; }
         .am2-inline-link svg { color: #e0bdc6; transition: transform .2s ease; }
         .am2-inline-link:hover svg { transform: translateX(4px); }
         .am2-hero-bottom { position: absolute; right: max(32px, calc((100% - 1180px)/2)); bottom: 25px; z-index: 2; display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,.82); font-size: 8px; letter-spacing: .16em; text-transform: uppercase; }
@@ -222,13 +264,13 @@ export default function App() {
         .am2-hero-content { animation: am2-rise .8s cubic-bezier(.2,.8,.2,1) both; }
         .am2-intro { padding: 30px 0; background: var(--white); border-bottom: 1px solid var(--line); }
         .am2-intro-inner { display: flex; justify-content: space-between; align-items: center; gap: 32px; }
-        .am2-intro p { max-width: 830px; margin: 0; font-size: clamp(19px, 2.4vw, 29px); line-height: 1.35; }
+        .am2-intro p { max-width: 830px; margin: 0; font-size: clamp(19px, 2.2vw, 27px); line-height: 1.4; }
         .am2-intro p em { color: var(--burgundy); }
         .am2-intro-mark { flex: 0 0 auto; color: var(--blue); }
         .am2-section { padding: 105px 0; }
         .am2-section-head { max-width: 675px; }
         .am2-section-head h2, .am2-firm-copy h2, .am2-process-head h2, .am2-contact-copy h2 {
-          margin: 18px 0 0; font-size: clamp(39px, 5vw, 62px); line-height: 1.02; letter-spacing: -.035em;
+          margin: 18px 0 0; font-size: clamp(36px, 4.4vw, 56px); line-height: 1.1; letter-spacing: -.03em;
         }
         .am2-section-head h2 em, .am2-firm-copy h2 em, .am2-process-head h2 em, .am2-contact-copy h2 em { color: var(--burgundy); }
         .am2-section-head > p { max-width: 520px; margin: 18px 0 0; color: var(--muted); font-size: 12px; line-height: 1.9; }
@@ -250,12 +292,54 @@ export default function App() {
         .am2-row-arrow { color: var(--burgundy); transition: transform .2s ease; }
         .am2-practice-row:hover .am2-row-arrow { transform: translate(3px,-3px); }
         .am2-firm { padding: 86px 0; background: var(--navy); color: var(--white); }
-        .am2-firm-layout { display: grid; grid-template-columns: 1.02fr .98fr; align-items: center; gap: 86px; }
-        .am2-firm-plate { position: relative; min-height: 410px; display: flex; align-items: end; padding: 25px; overflow: hidden; background: linear-gradient(140deg, rgba(76,104,122,.5), transparent 62%), var(--pale-blue); color: var(--navy); }
-        .am2-firm-plate::before { position: absolute; inset: 18px; border: 1px solid rgba(23,43,64,.3); content: ""; }
-        .am2-firm-plate::after { position: absolute; top: 52px; left: 50%; width: 1px; height: 68%; background: rgba(23,43,64,.28); content: ""; transform: rotate(26deg); }
-        .am2-plate-caption { position: relative; z-index: 1; display: flex; align-items: center; gap: 12px; padding: 12px 15px; background: rgba(255,254,250,.9); color: var(--navy); font-size: 8px; letter-spacing: .14em; text-transform: uppercase; }
-        .am2-plate-caption svg { color: var(--burgundy); }
+        .am2-firm-layout { display: grid; grid-template-columns: 1fr 1fr; align-items: start; gap: 76px; }
+        .am2-firm-frame {
+          position: relative;
+          background: #102133;
+          border: 1px solid rgba(217,181,191,.25);
+          padding: 12px;
+          box-shadow: 0 16px 36px rgba(16,33,51,.35);
+        }
+        .am2-firm-img-wrap {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 4 / 3.6;
+          overflow: hidden;
+          background: #172b40;
+        }
+        .am2-firm-img-wrap img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: top center;
+          display: block;
+        }
+        .am2-firm-meta {
+          padding: 18px 6px 6px;
+        }
+        .am2-firm-name {
+          margin: 0;
+          font-family: "Cinzel", Georgia, serif;
+          font-size: 14px;
+          letter-spacing: .08em;
+          text-transform: uppercase;
+          color: #fffefa;
+        }
+        .am2-firm-role {
+          display: inline-block;
+          margin-top: 4px;
+          color: #d9b5bf;
+          font-size: 9px;
+          letter-spacing: .14em;
+          text-transform: uppercase;
+          font-weight: 600;
+        }
+        .am2-firm-bio {
+          margin: 10px 0 0;
+          color: #d5dce0;
+          font-size: 11px;
+          line-height: 1.85;
+        }
         .am2-firm-copy .am2-kicker { color: #d9b5bf; }
         .am2-firm-copy h2 { max-width: 520px; }
         .am2-firm-copy h2 em { color: #d9b5bf; }
@@ -298,19 +382,31 @@ export default function App() {
         .am2-form-status { min-height: 14px; margin: 0; color: var(--burgundy); font-size: 10px; }
         .am2-footer { padding: 26px 0; background: #102236; color: #d4dce0; }
         .am2-footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 22px; }
-        .am2-footer-brand { display: flex; align-items: center; gap: 10px; color: var(--white); }
+        .am2-footer-brand { display: flex; align-items: center; gap: 10px; color: var(--white); cursor: pointer; }
         .am2-footer-brand svg { color: #d9b5bf; }
         .am2-footer-brand span { font-family: "Cinzel", Georgia, serif; font-size: 9px; letter-spacing: .12em; text-transform: uppercase; }
         .am2-footer-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
-        .am2-footer-nav a, .am2-copyright { color: #b6c0c6; font-size: 8px; letter-spacing: .08em; }
+        .am2-footer-nav a, .am2-copyright { color: #b6c0c6; font-size: 8px; letter-spacing: .08em; cursor: pointer; }
         .am2-footer-nav a:hover { color: white; }
         .am2-reveal { opacity: 0; transform: translateY(17px); transition: opacity .65s ease, transform .65s cubic-bezier(.22,1,.36,1); }
         .am2-reveal.is-visible { opacity: 1; transform: translateY(0); }
+        .am2-floating-chat {
+          position: fixed; right: 26px; bottom: 26px; z-index: 50;
+          width: 52px; height: 52px; border-radius: 50%;
+          background: var(--burgundy); color: #fffefa;
+          display: grid; place-items: center; border: 1px solid #d9b5bf;
+          box-shadow: 0 8px 24px rgba(23,38,55,.24);
+          cursor: pointer; transition: transform .25s ease, background .25s ease, box-shadow .25s ease;
+        }
+        .am2-floating-chat:hover {
+          background: var(--navy); transform: translateY(-3px) scale(1.04);
+          box-shadow: 0 12px 28px rgba(23,38,55,.32);
+        }
         @keyframes am2-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
         @media (max-width: 980px) {
           .am2-practice-layout { gap: 42px; grid-template-columns: .62fr 1.38fr; }
           .am2-practice-row { grid-template-columns: 30px 24px minmax(130px,.9fr) minmax(145px,1.1fr) 14px; gap: 11px; }
-          .am2-firm-layout { gap: 48px; }
+          .am2-firm-layout { gap: 44px; }
           .am2-contact-panel { gap: 42px; padding: 44px; }
         }
         @media (max-width: 760px) {
@@ -326,7 +422,7 @@ export default function App() {
           .am2-hero { min-height: 660px; min-height: min(760px, calc(100svh - 100px)); align-items: center; background-position: 58% center; }
           .am2-hero::before { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(15,31,47,.76), rgba(15,31,47,.48) 75%, rgba(15,31,47,.25)); content: ""; }
           .am2-hero-inner { padding-top: 58px; padding-bottom: 75px; }
-          .am2-hero h1 { font-size: clamp(58px, 12vw, 86px); }
+          .am2-hero h1 { font-size: clamp(48px, 11vw, 76px); }
           .am2-hero-copy { font-size: 12px; }
           .am2-hero-bottom { right: 20px; bottom: 19px; }
           .am2-intro { padding: 23px 0; }
@@ -341,7 +437,6 @@ export default function App() {
           .am2-firm { padding: 62px 0 70px; }
           .am2-firm-layout { grid-template-columns: 1fr; gap: 35px; }
           .am2-firm-copy { order: -1; }
-          .am2-firm-plate { min-height: 330px; }
           .am2-process-head { display: block; }
           .am2-process-head > p { margin-top: 16px; }
           .am2-stages { grid-template-columns: 1fr 1fr; row-gap: 26px; margin-top: 42px; }
@@ -351,13 +446,14 @@ export default function App() {
           .am2-contact-panel { grid-template-columns: 1fr; gap: 36px; padding: 31px 24px; }
           .am2-footer-inner { flex-direction: column; text-align: center; }
           .am2-footer-nav { gap: 15px; }
+          .am2-floating-chat { right: 18px; bottom: 18px; width: 46px; height: 46px; }
         }
         @media (max-width: 430px) {
           .am2-container { width: calc(100% - 36px); }
           .am2-brand-name { font-size: 10px; }
           .am2-brand-caption { font-size: 7px; }
           .am2-hero { min-height: 620px; }
-          .am2-hero h1 { font-size: 57px; }
+          .am2-hero h1 { font-size: 46px; }
           .am2-hero-actions { align-items: flex-start; flex-direction: column; gap: 18px; }
           .am2-intro-inner { align-items: flex-start; }
           .am2-intro-mark { width: 23px; margin-top: 3px; }
@@ -379,12 +475,17 @@ export default function App() {
       `}</style>
 
       <div className="am2-utility">
-        <span>Independent counsel · Accra, Ghana</span>
+        <span>Independent counsel · West Jordan, Utah</span>
         <span>For business leaders &amp; families</span>
       </div>
       <header className="am2-header">
         <div className="am2-container am2-nav">
-          <a className="am2-brand" href="#home" aria-label={`${firmName} home`}>
+          <a
+            className="am2-brand"
+            href="#home"
+            aria-label={`${firmName} home`}
+            onClick={(e) => scrollToSection(e, "#home")}
+          >
             <span className="am2-brand-mark"><Scale size={19} strokeWidth={1.4} /></span>
             <span>
               <span className="am2-brand-name">{firmName}</span>
@@ -392,34 +493,81 @@ export default function App() {
             </span>
           </a>
           <nav className="am2-links" aria-label="Main navigation">
-            {navItems.map((item) => <a key={item.href} href={item.href}>{item.label}</a>)}
+            {navItems.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={(e) => scrollToSection(e, item.href)}
+              >
+                {item.label}
+              </a>
+            ))}
           </nav>
-          <a className="am2-button" href="#contact">Arrange a consultation <ArrowUpRight size={14} /></a>
-          <button className="am2-menu-button" type="button" aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen} aria-controls="am2-mobile-menu" onClick={() => setMenuOpen((open) => !open)}>
+          <a
+            className="am2-button"
+            href="#contact"
+            onClick={(e) => scrollToSection(e, "#contact")}
+          >
+            Arrange a consultation <ArrowUpRight size={14} />
+          </a>
+          <button
+            className="am2-menu-button"
+            type="button"
+            aria-label={menuOpen ? "Close navigation" : "Open navigation"}
+            aria-expanded={menuOpen}
+            aria-controls="am2-mobile-menu"
+            onClick={() => setMenuOpen((open) => !open)}
+          >
             {menuOpen ? <X size={19} /> : <Menu size={19} />}
           </button>
           {menuOpen && (
             <nav id="am2-mobile-menu" className="am2-mobile-nav" aria-label="Mobile navigation">
-              {navItems.map((item) => <a key={item.href} href={item.href} onClick={() => setMenuOpen(false)}>{item.label}</a>)}
-              <a className="am2-button" href="#contact" onClick={() => setMenuOpen(false)}>Arrange a consultation <ArrowUpRight size={14} /></a>
+              {navItems.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={(e) => scrollToSection(e, item.href)}
+                >
+                  {item.label}
+                </a>
+              ))}
+              <a
+                className="am2-button"
+                href="#contact"
+                onClick={(e) => scrollToSection(e, "#contact")}
+              >
+                Arrange a consultation <ArrowUpRight size={14} />
+              </a>
             </nav>
           )}
         </div>
       </header>
 
-      <section className="am2-hero" id="home" aria-label="Welcome to Aldridge and Mensah">
+      <section className="am2-hero" id="home" aria-label="Welcome to Arthur Kirk Dahms">
         <div className="am2-container am2-hero-inner">
           <div className="am2-hero-content">
-            <span className="am2-kicker">A law firm in Accra</span>
-            <h1 className="am2-serif">Welcome to<br /><em>Aldridge &amp; Mensah.</em></h1>
+            <span className="am2-kicker">A law firm in West Jordan, Utah</span>
+            <h1 className="am2-serif">Welcome to<br /><em>Arthur Kirk Dahms.</em></h1>
             <p className="am2-hero-copy">Strategic counsel, measured advocacy, and partner-led guidance for decisions that shape businesses and families.</p>
             <div className="am2-hero-actions">
-              <a className="am2-button" href="#contact">Speak with counsel <ArrowUpRight size={14} /></a>
-              <a className="am2-inline-link" href="#practice">Explore our practice <ArrowRight size={14} /></a>
+              <a
+                className="am2-button"
+                href="#contact"
+                onClick={(e) => scrollToSection(e, "#contact")}
+              >
+                Speak with counsel <ArrowUpRight size={14} />
+              </a>
+              <a
+                className="am2-inline-link"
+                href="#practice"
+                onClick={(e) => scrollToSection(e, "#practice")}
+              >
+                Explore our practice <ArrowRight size={14} />
+              </a>
             </div>
           </div>
         </div>
-        <div className="am2-hero-bottom"><MapPin size={13} /> Accra, Ghana <span aria-hidden="true">·</span> Independence Avenue</div>
+        <div className="am2-hero-bottom"><MapPin size={13} /> West Jordan, Utah <span aria-hidden="true">·</span> Redwood Road</div>
       </section>
 
       <section className="am2-intro" aria-label="Our counsel">
@@ -445,7 +593,13 @@ export default function App() {
               {practices.map((practice, index) => {
                 const Icon = practice.icon;
                 return (
-                  <a className="am2-practice-row am2-reveal" href="#contact" key={practice.number} style={{ transitionDelay: `${index * 45}ms` }}>
+                  <a
+                    className="am2-practice-row am2-reveal"
+                    href="#contact"
+                    key={practice.number}
+                    style={{ transitionDelay: `${index * 45}ms` }}
+                    onClick={(e) => scrollToSection(e, "#contact")}
+                  >
                     <span className="am2-practice-num am2-serif">{practice.number}</span>
                     <Icon className="am2-practice-icon" size={19} strokeWidth={1.5} />
                     <h3>{practice.title}</h3>
@@ -461,19 +615,37 @@ export default function App() {
 
       <section className="am2-firm" id="firm">
         <div className="am2-container am2-firm-layout">
-          <div className="am2-firm-plate am2-reveal" aria-label="A considered place for counsel">
-            <div className="am2-plate-caption"><Landmark size={15} strokeWidth={1.5} /> A law firm rooted in Accra</div>
+          <div className="am2-firm-frame am2-reveal">
+            <div className="am2-firm-img-wrap">
+              <img
+                src={founderImg}
+                alt="Arthur Kirk Dahms"
+              />
+            </div>
+            <div className="am2-firm-meta">
+              <h3 className="am2-firm-name">Arthur Kirk Dahms</h3>
+              <span className="am2-firm-role">Principal &amp; Managing Counsel</span>
+              <p className="am2-firm-bio">
+                Admitted to practice across Utah state and federal courts, Arthur Kirk Dahms provides direct, partner-led stewardship in corporate governance, tax controversy, and commercial dispute resolution.
+              </p>
+            </div>
           </div>
           <div className="am2-firm-copy am2-reveal">
             <span className="am2-kicker">The firm</span>
             <h2 className="am2-serif">Sound judgment.<br /><em>Personal counsel.</em></h2>
-            <p>Founded on the belief that superior legal counsel pairs deep statutory knowledge with candid commercial pragmatism, Aldridge &amp; Mensah serves leaders, institutions, and families facing defining milestones.</p>
+            <p>Founded on the belief that superior legal counsel pairs deep statutory knowledge with candid commercial pragmatism, Arthur Kirk Dahms serves leaders, institutions, and families facing defining milestones.</p>
             <div className="am2-firm-points">
               <div className="am2-firm-point">Direct partner stewardship through each matter</div>
               <div className="am2-firm-point">Candid advice on options, costs, and next steps</div>
               <div className="am2-firm-point">Discreet counsel for business and private matters</div>
             </div>
-            <a className="am2-button" href="#contact">Meet with our counsel <ArrowUpRight size={14} /></a>
+            <a
+              className="am2-button"
+              href="#contact"
+              onClick={(e) => scrollToSection(e, "#contact")}
+            >
+              Meet with our counsel <ArrowUpRight size={14} />
+            </a>
           </div>
         </div>
       </section>
@@ -506,9 +678,9 @@ export default function App() {
             <h2 className="am2-serif">Let us understand <em>what matters.</em></h2>
             <p>Share a brief outline so the firm can direct your enquiry to the right person.</p>
             <div className="am2-contact-details">
-              <a href="tel:+233302000000"><Phone size={15} /> +233 (0) 30 200 0000</a>
-              <a href="mailto:counsel@aldridgemensah.com"><Mail size={15} /> counsel@aldridgemensah.com</a>
-              <span><MapPin size={15} /> 14 Independence Avenue, Ridge, Accra</span>
+              <a href="tel:+14252197044"><Phone size={15} /> +1 (425) 219-7044</a>
+              <a href="mailto:counsel@dahmslaw.com"><Mail size={15} /> counsel@dahmslaw.com</a>
+              <span><MapPin size={15} /> West Jordan, Utah</span>
             </div>
           </div>
           <form className="am2-form" onSubmit={handleBrief}>
@@ -525,7 +697,7 @@ export default function App() {
             <div className="am2-form-row">
               <div className="am2-field">
                 <label htmlFor="am2-phone">Phone / WhatsApp</label>
-                <input id="am2-phone" name="phone" type="tel" placeholder="+233" autoComplete="tel" />
+                <input id="am2-phone" name="phone" type="tel" placeholder="+1" autoComplete="tel" />
               </div>
               <div className="am2-field">
                 <label htmlFor="am2-practice">Area of counsel</label>
@@ -549,13 +721,37 @@ export default function App() {
 
       <footer className="am2-footer">
         <div className="am2-container am2-footer-inner">
-          <a className="am2-footer-brand" href="#home"><Scale size={17} strokeWidth={1.4} /><span>{firmName}</span></a>
+          <a
+            className="am2-footer-brand"
+            href="#home"
+            onClick={(e) => scrollToSection(e, "#home")}
+          >
+            <Scale size={17} strokeWidth={1.4} /><span>{firmName}</span>
+          </a>
           <nav className="am2-footer-nav" aria-label="Footer navigation">
-            {navItems.map((item) => <a key={item.href} href={item.href}>{item.label}</a>)}
+            {navItems.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={(e) => scrollToSection(e, item.href)}
+              >
+                {item.label}
+              </a>
+            ))}
           </nav>
           <div className="am2-copyright">© {currentYear} {firmName}</div>
         </div>
       </footer>
+
+      {/* Floating Chat Icon */}
+      <a
+        href="#contact"
+        className="am2-floating-chat"
+        aria-label="Direct message or contact counsel"
+        onClick={(e) => scrollToSection(e, "#contact")}
+      >
+        <MessageSquare size={22} strokeWidth={1.75} />
+      </a>
     </main>
   );
 }
